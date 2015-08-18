@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe PinsController, type: :controller do
   describe "GET #index" do
     it "assigns @pins" do
-      pin = Pin.create(title: "Test", description: "123")
+      pin = FactoryGirl.create(:pin)
       get :index
       expect(assigns(:pins)).to eq([pin])
     end
@@ -14,9 +14,9 @@ RSpec.describe PinsController, type: :controller do
     end
 
     it "assigns @pins newest first" do
-      pin1 = Pin.create(title: "A", description: "123")
-      pin2 = Pin.create(title: "C", description: "123")
-      pin3 = Pin.create(title: "B", description: "123")
+      pin1 = FactoryGirl.create(:pin)
+      pin2 = FactoryGirl.create(:pin)
+      pin3 = FactoryGirl.create(:pin)
       get :index
       expect(assigns(:pins)).to eq([pin3, pin2, pin1])
     end

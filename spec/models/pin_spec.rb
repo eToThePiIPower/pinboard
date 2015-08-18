@@ -2,10 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Pin, type: :model do
   before :each do
-    @pin = Pin.new(
-      title: "Title",
-      description: "A description",
-    )
+    @pin = FactoryGirl.create(:pin)
   end
 
   it "is valid with a title and description" do
