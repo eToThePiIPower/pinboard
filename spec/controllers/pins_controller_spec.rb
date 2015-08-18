@@ -20,5 +20,14 @@ RSpec.describe PinsController, type: :controller do
       get :index
       expect(assigns(:pins)).to eq([pin3, pin2, pin1])
     end
-  end
+  end #GET #index
+
+  describe "GET #new" do
+    it "assigns a new Pin to @pin" do
+      get :new
+      expect(assigns(:pin).title).to be_nil
+      expect(assigns(:pin).description).to be_nil
+    end
+  end #GET #new
+
 end
