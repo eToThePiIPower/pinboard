@@ -1,7 +1,7 @@
 class PinsController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :find_pin, only: [:show]
   before_action :find_users_pin, only: [:edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:index, :show]
 
   def index
     @pins = Pin.all.order('created_at DESC')
@@ -18,7 +18,7 @@ class PinsController < ApplicationController
       redirect_to :root
     else
       flash[:warning] = 'Pin was not created'
-      render 'new'
+      render :new, status: 400
     end
   end
 
@@ -34,7 +34,7 @@ class PinsController < ApplicationController
       redirect_to @pin
     else
       flash[:warning] = 'Pin was not updated'
-      render 'edit'
+      render :edit, status: 400
     end
   end
 

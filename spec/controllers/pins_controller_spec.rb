@@ -12,6 +12,7 @@ RSpec.describe PinsController, type: :controller do
     it "renders the index template" do
       get :index
       expect(response).to render_template(:index)
+      expect(response).to be_ok
     end
 
     it "assigns @pins newest first" do
@@ -36,20 +37,19 @@ RSpec.describe PinsController, type: :controller do
       end
 
       it "renders the new Pin form" do
-        expect(response).to be_ok
         expect(response).to render_template :new
+        expect(response).to be_ok
       end
     end #when logged in
 
     context "when not logged in" do
       before :each do
         login_with nil
-        get :new
       end
 
       it "redirects to the sign in page" do
+        get :new
         expect(response).to redirect_to new_user_session_path
-        expect(response).not_to be_successful
       end
     end #when not logged in
   end #GET #new
@@ -84,41 +84,52 @@ RSpec.describe PinsController, type: :controller do
       it "rerenders the :new page" do
         post :create, pin: @invalid_attribs
         expect(response).to render_template :new
+        expect(response.status).to eq(400) 
       end
     end #when logged in with invalid pin attributes
 
     context "when not logged in" do
       before :each do
+        @valid_attribs = FactoryGirl.attributes_for(:pin)
         login_with nil
-        post :create, pin: FactoryGirl.attributes_for(:pin)
+      end
+
+      it "does not save the new pin in the database" do
+        expect{post :create, pin: @valid_attribs}.not_to change(Pin, :count)
       end
 
       it "redirects to the sign in page" do
+        post :create, pin: FactoryGirl.attributes_for(:pin)
         expect(response).to redirect_to new_user_session_path
-        expect(response).not_to be_successful
       end
     end #when not logged in
   end #POST #create
 
   describe "GET #show" do
+    before :each do
+      @pin = FactoryGirl.create(:pin)
+      get :show, id: @pin
+    end
+
     it "assigns the requested pin" do
-      pin = FactoryGirl.create(:pin)
-      get :show, id: pin
-      expect(assigns(:pin)).to eq(pin)
+      expect(assigns(:pin)).to eq(@pin)
     end
 
     it "renders the #show view" do
-      get :show, id: FactoryGirl.create(:pin)
       expect(response).to render_template :show
+      expect(response).to be_ok
     end
   end #GET #show
 
   describe "GET #edit" do
-    context "when logged in as creator" do
+    before :each do
+      @owner = FactoryGirl.create(:user)
+      @pin = @owner.pins.create(FactoryGirl.attributes_for(:pin))
+    end
+
+    context "when logged in as owner" do
       before :each do
-        @user = FactoryGirl.create(:user)
-        @pin = @user.pins.create(FactoryGirl.attributes_for(:pin))
-        login_with @user
+        login_with @owner
         get :edit, id: @pin
       end
 
@@ -128,25 +139,32 @@ RSpec.describe PinsController, type: :controller do
       end
 
       it "renders the new Pin form" do
-        expect(response).to be_ok
         expect(response).to render_template :edit
+        expect(response).to be_ok
       end
-    end #when logged in
+    end #when logged in as the owner
 
     context "when logged in as other user" do
       before :each do
-        @owner = FactoryGirl.create(:user)
-        @user = FactoryGirl.create(:user)
-        @pin = @owner.pins.create(FactoryGirl.attributes_for(:pin))
-        login_with @user
+        login_with FactoryGirl.create(:user)
         get :edit, id: @pin
       end
 
       it "redirects to the show pin form" do
         expect(response).to redirect_to @pin
-        expect(response).not_to be_ok
       end
-    end #when logged in
+    end #when logged in as other user
+
+    context "when not logged in" do
+      before :each do
+        login_with nil
+        get :edit, id: @pin
+      end
+
+      it "redirects to the sign in page" do
+        expect(response).to redirect_to new_user_session_path
+      end
+    end #when not logged in
   end #GET #edit
 
   describe "PUT #update" do
@@ -155,65 +173,63 @@ RSpec.describe PinsController, type: :controller do
       @pin = @owner.pins.create(FactoryGirl.attributes_for(:pin))
     end
 
-    context "when logged in as creator with valid attributes" do
+    context "when logged in as owner with valid attributes" do
       before :each do
         login_with @owner
+        @new_pin = FactoryGirl.attributes_for(:pin, title: "New Title")
+        put :update, id: @pin, pin: @new_pin
       end
 
       it "locates the requested @pin" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin)
         expect(assigns(:pin)).to eq(@pin)
       end
 
       it "changes @pin's attributes" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title")
         @pin.reload
         expect(@pin.title).to eq("New Title")
       end
 
       it "redirects to the updated pin" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin)
         expect(response).to redirect_to @pin
       end
-    end #when logged in as creator with valid attributes
+    end #when logged in as owner with valid attributes
 
-    context "when logged in as creator with invalid attributes" do
+    context "when logged in as owner with invalid attributes" do
       before :each do
         login_with @owner
+        @new_pin = FactoryGirl.attributes_for(:invalid_pin)
+        put :update, id: @pin, pin: @new_pin
       end
 
       it "locates the requested @pin" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:invalid_pin)
         expect(assigns(:pin)).to eq(@pin)
       end
 
       it "does not change @pin's attributes" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title", description: nil)
         @pin.reload
-        expect(@pin.title).not_to eq("New Title")
+        expect(@pin.title).not_to eq(@new_pin['title'])
+        expect(@pin.description).not_to eq(@new_pin['description'])
       end
 
       it "rerenders the :edit page" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:invalid_pin)
         expect(response).to render_template :edit
+        expect(response.status).to eq(400)
       end
     end #when logged in as creator with invalid attributes
 
     context "when logged in as another user" do
       before :each do
         login_with FactoryGirl.create(:user)
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title")
       end
 
       it "does not change @pin's attributes" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title")
         @pin.reload
         expect(@pin.title).not_to eq("New Title")
       end
 
       it "redirects to the :show page" do
-        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin)
         expect(response).to redirect_to @pin
-        expect(response).not_to be_ok
       end
     end
   end #PUT #update
@@ -251,8 +267,22 @@ RSpec.describe PinsController, type: :controller do
       it "redirects to the root page" do
         delete :destroy, id: @pin
         expect(response).to redirect_to @pin
-        expect(response).not_to be_ok
       end
     end #when logged in as another user
+
+    context "when not logged in" do
+      before :each do
+        login_with nil
+      end
+
+      it "does not delete the pin" do
+        expect{delete :destroy, id: @pin}.not_to change(Pin, :count)
+      end
+
+      it "redirects to the root page" do
+        delete :destroy, id: @pin
+        expect(response).to redirect_to new_user_session_path
+      end
+    end #when not logged in
   end #DELETE #destroy
 end #describe PinsController
