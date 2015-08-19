@@ -1,5 +1,6 @@
 class PinsController < ApplicationController
-  before_action :find_pin, only: [:show, :edit, :update, :destroy]
+  before_action :find_pin, only: [:show]
+  before_action :find_users_pin, only: [:edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :show]
 
   def index
@@ -50,5 +51,15 @@ class PinsController < ApplicationController
 
   def find_pin
     @pin = Pin.find(params[:id])
+  end
+
+  def find_users_pin
+    begin
+      @pin = current_user.pins.find(params[:id])
+    rescue
+      flash[:warning] = 'Invalid pin, or you are not the owner'
+      @pin = Pin.find(params[:id])
+      redirect_to @pin
+    end
   end
 end
