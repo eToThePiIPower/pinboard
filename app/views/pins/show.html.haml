@@ -1,4 +1,7 @@
 %h1= @pin.title
 %p= @pin.description
 
-= link_to "Back", root_path
+.btn-group
+  = link_to "Back", root_path, class: "btn btn-primary"
+  = link_to "Edit", edit_pin_path, class: "btn btn-warning"
+  = link_to "Delete", pin_path, method: :delete, class: "btn btn-danger"

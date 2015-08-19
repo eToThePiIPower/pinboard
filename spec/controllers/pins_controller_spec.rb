@@ -69,7 +69,6 @@ RSpec.describe PinsController, type: :controller do
         expect(response).to render_template :new
       end
     end #with invalid pin attributes
-
   end #POST #create
 
   describe "GET #show" do
@@ -84,5 +83,79 @@ RSpec.describe PinsController, type: :controller do
       expect(response).to render_template :show
     end
   end #GET #show
+
+  describe "GET #edit" do
+    before :each do
+      @pin = FactoryGirl.create(:pin)
+      get :edit, id: @pin
+    end
+
+    it "assigns a new Pin to @pin" do
+      expect(assigns(:pin).title).to eq(@pin.title) 
+      expect(assigns(:pin).description).to eq(@pin.description) 
+    end
+
+    it "renders the new Pin form" do
+      expect(response).to be_ok 
+      expect(response).to render_template :edit
+    end
+  end #GET #edit
+
+  describe "PUT #update" do
+    before :each do
+      @pin = FactoryGirl.create(:pin)
+    end
+
+    context "with valid attributes" do
+      it "locates the requested @pin" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin)
+        expect(assigns(:pin)).to eq(@pin)
+      end
+
+      it "changes @pin's attributes" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title")
+        @pin.reload
+        expect(@pin.title).to eq("New Title")
+      end
+
+      it "redirects to the updated pin" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin)
+        expect(response).to redirect_to @pin
+      end
+    end #with valid attributes
+
+    context "with invalid attributes" do
+      it "locates the requested @pin" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:invalid_pin)
+        expect(assigns(:pin)).to eq(@pin)
+      end
+
+      it "does not change @pin's attributes" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:pin, title: "New Title", description: nil)
+        @pin.reload
+        expect(@pin.title).not_to eq("New Title")
+      end
+
+      it "rerenders the :edit page" do
+        put :update, id: @pin, pin: FactoryGirl.attributes_for(:invalid_pin)
+        expect(response).to render_template :edit
+      end
+    end #with invalid attributes
+  end #PUT #update
+
+  describe "DELETE #destroy" do
+    before :each do
+      @pin = FactoryGirl.create(:pin)
+    end
+
+    it "deletes the pin" do
+      expect{delete :destroy, id: @pin}.to change(Pin, :count).by(-1)
+    end
+
+    it "redirects to the root page" do
+      delete :destroy, id: @pin
+      expect(response).to redirect_to :root
+    end
+  end
 
 end
