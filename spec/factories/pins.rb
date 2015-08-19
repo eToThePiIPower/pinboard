@@ -5,6 +5,6 @@ FactoryGirl.define do
   end
 
   factory :invalid_pin, parent: :pin do |f|
-    f.title = nil
+    f.title nil
   end
 end

@@ -30,4 +30,37 @@ RSpec.describe PinsController, type: :controller do
     end
   end #GET #new
 
+  describe "POST #create" do
+    context "with valid pin" do
+      before :each do
+        @valid_attribs = FactoryGirl.attributes_for(:pin)
+      end
+
+      it "saves the new pin in the database" do
+        expect{post :create, pin: @valid_attribs}.to change(Pin, :count).by(1)
+      end
+
+      it "redirects to the root page" do
+        post :create, pin: @valid_attribs
+        expect(response).to redirect_to :root
+      end
+    end #with valid pin attributes
+
+    context "with invalid pin attributes" do
+      before :each do
+        @invalid_attribs = FactoryGirl.attributes_for(:invalid_pin)
+      end
+
+      it "does not save the new pin in the database" do
+        expect{post :create, pin: @invalid_attribs}.not_to change(Pin, :count)
+      end
+
+      it "rerenders the :new page" do
+        post :create, pin: @invalid_attribs
+        expect(response).to render_template :new
+      end
+    end #with invalid pin attributes
+
+  end #POST #create
+
 end
