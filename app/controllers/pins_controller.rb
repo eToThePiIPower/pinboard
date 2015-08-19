@@ -15,7 +15,7 @@ class PinsController < ApplicationController
       flash[:success] = 'Pin was created successfully'
       redirect_to :root
     else
-      flash[:error] = 'Pin was not created'
+      flash[:warning] = 'Pin was not created'
       render 'new'
     end
   end
