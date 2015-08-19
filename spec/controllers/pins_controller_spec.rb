@@ -72,4 +72,17 @@ RSpec.describe PinsController, type: :controller do
 
   end #POST #create
 
+  describe "GET #show" do
+    it "assigns the requested pin" do
+      pin = FactoryGirl.create(:pin)
+      get :show, id: pin
+      expect(assigns(:pin)).to eq(pin)
+    end
+
+    it "renders the #show view" do
+      get :show, id: FactoryGirl.create(:pin)
+      expect(response).to render_template :show
+    end
+  end #GET #show
+
 end
