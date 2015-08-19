@@ -143,4 +143,19 @@ RSpec.describe PinsController, type: :controller do
     end #with invalid attributes
   end #PUT #update
 
+  describe "DELETE #destroy" do
+    before :each do
+      @pin = FactoryGirl.create(:pin)
+    end
+
+    it "deletes the pin" do
+      expect{delete :destroy, id: @pin}.to change(Pin, :count).by(-1)
+    end
+
+    it "redirects to the root page" do
+      delete :destroy, id: @pin
+      expect(response).to redirect_to :root
+    end
+  end
+
 end

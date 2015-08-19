@@ -1,5 +1,5 @@
 class PinsController < ApplicationController
-  before_action :find_pin, only: [:show, :edit, :update]
+  before_action :find_pin, only: [:show, :edit, :update, :destroy]
 
   def index
     @pins = Pin.all.order('created_at DESC')
@@ -34,6 +34,11 @@ class PinsController < ApplicationController
       flash[:warning] = 'Pin was not updated'
       render 'edit'
     end
+  end
+
+  def destroy
+    @pin.delete
+    redirect_to :root
   end
 
   private
