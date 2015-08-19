@@ -12,9 +12,11 @@ class PinsController < ApplicationController
   def create
     @pin = Pin.new(pin_params)
     if @pin.save
-      redirect_to :root, success: 'Pin was created successfully'
+      flash[:success] = 'Pin was created successfully'
+      redirect_to :root
     else
-      render 'new', error: 'Pin was not created'
+      flash[:error] = 'Pin was not created'
+      render 'new'
     end
   end
 
