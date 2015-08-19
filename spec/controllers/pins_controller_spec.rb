@@ -25,6 +25,7 @@ RSpec.describe PinsController, type: :controller do
 
   describe "GET #new" do
     before :each do
+      login_with create(:user)
       get :new
     end
 
@@ -43,6 +44,7 @@ RSpec.describe PinsController, type: :controller do
     context "with valid pin" do
       before :each do
         @valid_attribs = FactoryGirl.attributes_for(:pin)
+        login_with create(:user)
       end
 
       it "saves the new pin in the database" do
@@ -58,6 +60,7 @@ RSpec.describe PinsController, type: :controller do
     context "with invalid pin attributes" do
       before :each do
         @invalid_attribs = FactoryGirl.attributes_for(:invalid_pin)
+        login_with create(:user)
       end
 
       it "does not save the new pin in the database" do
@@ -87,6 +90,7 @@ RSpec.describe PinsController, type: :controller do
   describe "GET #edit" do
     before :each do
       @pin = FactoryGirl.create(:pin)
+      login_with create(:user)
       get :edit, id: @pin
     end
 
@@ -104,6 +108,7 @@ RSpec.describe PinsController, type: :controller do
   describe "PUT #update" do
     before :each do
       @pin = FactoryGirl.create(:pin)
+      login_with create(:user)
     end
 
     context "with valid attributes" do
@@ -146,6 +151,7 @@ RSpec.describe PinsController, type: :controller do
   describe "DELETE #destroy" do
     before :each do
       @pin = FactoryGirl.create(:pin)
+      login_with create(:user)
     end
 
     it "deletes the pin" do
