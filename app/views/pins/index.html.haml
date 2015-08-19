@@ -1,1 +1,5 @@
-%h1 This is the index placeholder
+%h1 Welcome to Pin Board
+- @pins.each do |pin|
+  %h2= link_to pin.title, pin
+
+= link_to "New", new_pin_path
