@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PinsController, type: :controller do
+  render_views
   describe "GET #index" do
     it "assigns @pins" do
       pin = FactoryGirl.create(:pin)
@@ -23,10 +24,18 @@ RSpec.describe PinsController, type: :controller do
   end #GET #index
 
   describe "GET #new" do
-    it "assigns a new Pin to @pin" do
+    before :each do
       get :new
+    end
+
+    it "assigns a new Pin to @pin" do
       expect(assigns(:pin).title).to be_nil
       expect(assigns(:pin).description).to be_nil
+    end
+
+    it "renders the new Pin form" do
+      expect(response).to be_ok 
+      expect(response).to render_template :new
     end
   end #GET #new
 
