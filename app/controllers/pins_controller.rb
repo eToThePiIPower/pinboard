@@ -1,22 +1,24 @@
 class PinsController < ApplicationController
-  before_action :find_pin, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :find_pin, only: [:show]
+  before_action :find_users_pin, only: [:edit, :update, :destroy]
 
   def index
     @pins = Pin.all.order('created_at DESC')
   end
 
   def new
-    @pin = Pin.new
+    @pin = current_user.pins.build
   end
 
   def create
-    @pin = Pin.new(pin_params)
+    @pin = current_user.pins.build(pin_params)
     if @pin.save
       flash[:success] = 'Pin was created successfully'
       redirect_to :root
     else
       flash[:warning] = 'Pin was not created'
-      render 'new'
+      render :new, status: 400
     end
   end
 
@@ -32,7 +34,7 @@ class PinsController < ApplicationController
       redirect_to @pin
     else
       flash[:warning] = 'Pin was not updated'
-      render 'edit'
+      render :edit, status: 400
     end
   end
 
@@ -49,5 +51,15 @@ class PinsController < ApplicationController
 
   def find_pin
     @pin = Pin.find(params[:id])
+  end
+
+  def find_users_pin
+    begin
+      @pin = current_user.pins.find(params[:id])
+    rescue
+      flash[:warning] = 'Invalid pin, or you are not the owner'
+      @pin = Pin.find(params[:id])
+      redirect_to @pin
+    end
   end
 end
