@@ -1,4 +1,9 @@
-.col-md-6.col-md-offset-3
-  %h1 Pin Something Cool!
-  = render 'form'
-  = link_to "Back", root_path
+#pin_new.col-md-8.col-md-offset-2
+  .row
+    .panel.panel-default
+      .panel-heading
+        %h1 New Pin
+      .panel-body
+        = render 'form'
+      .panel-footer
+        = current_user.email

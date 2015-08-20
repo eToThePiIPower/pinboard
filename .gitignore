@@ -17,3 +17,5 @@
 /tmp
 *~
 *.swp
+/public/system/pins/images/*
+!/public/system/pins/images/.keep

@@ -1,7 +1,11 @@
-%h1= @pin.title
-%p= @pin.description
-
-.btn-group
-  = link_to "Back", root_path, class: "btn btn-primary"
-  = link_to "Edit", edit_pin_path, class: "btn btn-warning"
-  = link_to "Delete", pin_path, method: :delete, class: "btn btn-danger"
+#pin_show.panel.panel-default
+  %h1= @pin.title
+  = image_tag @pin.image.url(:large), class: "pin_image"
+  .panel-body
+    %p.description= @pin.description
+    .user
+      = @pin.user.email
+  .panel-footer
+    .btn-group
+      = link_to "Edit", edit_pin_path, class: "btn btn-warning"
+      = link_to "Delete", pin_path, method: :delete, class: "btn btn-danger"
