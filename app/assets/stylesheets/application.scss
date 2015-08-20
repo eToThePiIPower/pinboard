@@ -10,11 +10,61 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require 'masonry/transitions'
  *= require_tree .
  *= require_self
  */
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+body {
+  background: #EEE;
+}
+
+nav {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  .navbar-brand {
+    a {
+      color: #B21;
+      font-style: italic;
+      font-family: cursive;
+      font-weight: bolder;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+#pins {
+  margin: 0 auto;
+  width: 100%;
+  .box {
+    text-align: center;
+    margin: 10px;
+    width: 300px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    h2 {
+      font-size: 1.5em;
+      margin: 0;
+      padding: 10px 10px;
+      a {
+        color: #555;
+      }
+    }
+    .user {
+      font-size: 1em;
+      border-top: 1px solid #EEE;
+      padding: 5px;
+      margin: 0;
+    }
+  }
+}
 
 .alert-notice {
   @extend .alert-info;
