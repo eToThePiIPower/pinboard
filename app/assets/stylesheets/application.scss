@@ -66,13 +66,11 @@ nav {
   }
 }
 
-#pin_show {
+#pin_edit, #pin_new, #pin_show {
   text-align: center;
-  margin: auto;
-  width: 600px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
   border-radius: 5px;
-  h2 {
+  h1 {
     margin: 15px 0px 15px 0px;
   }
   .pin_image {
@@ -84,7 +82,6 @@ nav {
     }
   }
   .panel-body {
-    padding-bottom: 0px;
     .description {
       padding: 35px;
       color: #999;
@@ -96,6 +93,7 @@ nav {
       font-size: 1em;
       border-top: 1px solid #EEE;
       padding: 5px;
+      padding-bottom: 0px;
       margin: 0;
     }
   }
@@ -103,6 +101,23 @@ nav {
     padding: 20px 35px;
     p {
       margin: 0;
+    }
+  }
+}
+
+#pin_show {
+  width: 600px;
+  margin: auto;
+}
+
+#pin_edit,#pin_new {
+  .panel-body {
+    label {
+      text-align: left;
+      display: block;
+    }
+    textarea {
+      min-height: 250px;
     }
   }
 }
