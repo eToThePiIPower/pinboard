@@ -108,6 +108,9 @@ nav {
 #pin_show {
   width: 600px;
   margin: auto;
+  .panel-footer {
+    height: 75px;
+  }
 }
 
 #pin_edit,#pin_new {
