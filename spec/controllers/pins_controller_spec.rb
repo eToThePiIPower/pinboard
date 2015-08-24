@@ -285,4 +285,40 @@ RSpec.describe PinsController, type: :controller do
       end
     end #when not logged in
   end #DELETE #destroy
+
+  describe "PUT #upvote" do
+    context "when logged in" do
+      before :each do
+        @pin = FactoryGirl.create(:pin)
+        @user = FactoryGirl.create(:user)
+        login_with(@user)
+      end
+
+      it "increased the count by onen" do
+        expect{ get :upvote, id: @pin }.to change(@pin, :votes).by(1)
+      end
+
+      it "does no increased the count a second time for the same user" do
+        expect{ get :upvote, id: @pin }.to change(@pin, :votes).by(1)
+        expect{ get :upvote, id: @pin }.not_to change(@pin, :votes)
+      end
+
+      it "increased the count when a different user votes" do
+        expect{ get :upvote, id: @pin }.to change(@pin, :votes).by(1)
+        login_with create(:user)
+        expect{ get :upvote, id: @pin }.to change(@pin, :votes).by(1)
+      end
+    end #when logged in
+
+    context "when not logged in" do
+      before :each do
+        @pin = FactoryGirl.create(:pin)
+        login_with(nil)
+      end
+
+      it "does not increase the count for an anonyous user" do
+        expect{ get :upvote, id: @pin }.not_to change(@pin, :votes)
+      end
+    end #when not logged in
+  end #PUT #upvote
 end #describe PinsController

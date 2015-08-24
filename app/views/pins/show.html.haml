@@ -3,9 +3,12 @@
   = image_tag @pin.image.url(:large), class: "pin_image"
   .panel-body
     %p.description= @pin.description
-    .user
-      = @pin.user.email
   .panel-footer
-    .btn-group
+    .user.pull-left
+      = @pin.user.email
+    .btn-group.pull-right
+      = link_to like_pin_path(@pin), method: :put, class: "btn btn-primary" do
+        %span.glyphicon.glyphicon-heart
+          = @pin.get_upvotes.size
       = link_to "Edit", edit_pin_path, class: "btn btn-warning"
       = link_to "Delete", pin_path, method: :delete, class: "btn btn-danger"
