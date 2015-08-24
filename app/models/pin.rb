@@ -1,5 +1,6 @@
 class Pin < ActiveRecord::Base
   belongs_to :user
+  acts_as_votable
   validates_presence_of :title, :description, :user_id
   
   has_attached_file :image, styles: { medium: "300x300>", large: "600x600>" }
